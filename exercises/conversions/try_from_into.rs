@@ -11,8 +11,6 @@ struct Color {
     blue: u8,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
 // You need create implementation for a tuple of three integer,
@@ -22,10 +20,37 @@ struct Color {
 // but slice implementation need check slice length!
 // Also note, that chunk of correct rgb color must be integer in range 0..=255.
 
+fn out_of_range(num: i16) -> bool {
+    if num > 255 || num < 0 {
+        return false;
+    }
+    true
+}
+
+fn any_are_out_of_range(a: i16, b: i16, c: i16) -> bool {
+    if out_of_range(a) || out_of_range(b) || out_of_range(c) {
+        return false;
+    }
+    true
+}
+
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = String;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let (r, g, b) = tuple;
+        
+        if any_are_out_of_range(r, g, b) {
+            return Err(String::from("Out of range"));
+        }
+
+        let color = Color{
+            red: r as u8,
+            green: g as u8,
+            blue: b as u8,
+        };
+
+        return Ok(color);
     }
 }
 
@@ -33,6 +58,20 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = String;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+
+        let [r, g, b] = arr;
+
+        if any_are_out_of_range(r, g, b) {
+            return Err(String::from("Out of range"));
+        }
+
+        let color = Color{
+            red: r as u8,
+            green: g as u8,
+            blue: b as u8,
+        };
+
+        return Ok(color);
     }
 }
 
@@ -40,6 +79,26 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = String;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+
+        if slice.len() != 3 {
+            return Err(String::from("Wrong length"));
+        }
+        if let [r, g, b] = *slice {
+
+            if any_are_out_of_range(r, g, b) {
+                return Err(String::from("Out of range"));
+            }
+
+            let color = Color{
+                red: r as u8,
+                green: g as u8,
+                blue: b as u8,
+            };
+    
+            return Ok(color);
+        } else {
+            return Err(String::from("Wrong length"));
+        }
     }
 }
 
